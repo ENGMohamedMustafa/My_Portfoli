@@ -1,3 +1,5 @@
+
+
 document.getElementById("year").textContent = new Date().getFullYear();
 
 const hamburger = document.getElementById("hamburger");
@@ -20,7 +22,6 @@ document.querySelectorAll(".nav-links a").forEach((link) => {
 document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
   anchor.addEventListener("click", function (e) {
     e.preventDefault();
-
     const targetId = this.getAttribute("href");
     const targetElement = document.querySelector(targetId);
 
@@ -34,7 +35,6 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
 });
 
 const animateElements = document.querySelectorAll(".animate");
-
 const observer = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
@@ -54,6 +54,8 @@ animateElements.forEach((element) => {
 const contactForm = document.getElementById("contactForm");
 
 if (contactForm) {
+  emailjs.init("f6pXFNCyIqwdjwIQ9"); // ✅ Public Key
+
   contactForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
@@ -69,30 +71,28 @@ if (contactForm) {
       const email = formData.get("email");
       const message = formData.get("message");
 
-      const whatsappMessage = `Name: ${name}%0AEmail: ${email}%0AMessage: ${message}`;
-      const phoneNumber = "201098680662"; 
-      const whatsappURL = `https://wa.me/${phoneNumber}?text=${whatsappMessage}`;
+      const templateParams = {
+        from_name: name,
+        from_email: email,
+        message: message,
+        to_email: "mohamedmshaban99@gmail.com" // ممكن تخصصها في لوحة التحكم بدل هنا
+      };
 
-      
-      window.open(whatsappURL, "_blank");
+      const response = await emailjs.send(
+        "service_7zu80yi",    // ✅ Service ID
+        "template_6cctq5s",   // ✅ Template ID
+        templateParams
+      );
 
-      
-      const response = await fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData).toString(),
-      });
-
-      if (response.ok) {
-        alert("Thank you for your message! I will get back to you soon.");
+      if (response.status === 200) {
+        alert("✅ تم إرسال الرسالة بنجاح! هتواصل معك قريبًا.");
         contactForm.reset();
       } else {
-        throw new Error("Network response was not ok");
+        throw new Error("EmailJS response error");
       }
-      
 
     } catch (error) {
-      alert("There was an error sending your message. Please try again later.");
+      alert("❌ حصلت مشكلة في إرسال الرسالة. حاول مرة تانية.");
       console.error("Error:", error);
     } finally {
       submitButton.textContent = originalButtonText;
