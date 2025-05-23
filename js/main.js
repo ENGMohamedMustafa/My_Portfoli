@@ -65,6 +65,18 @@ if (contactForm) {
       submitButton.textContent = "Sending...";
       submitButton.disabled = true;
 
+      const name = formData.get("name");
+      const email = formData.get("email");
+      const message = formData.get("message");
+
+      const whatsappMessage = `Name: ${name}%0AEmail: ${email}%0AMessage: ${message}`;
+      const phoneNumber = "201098680662"; 
+      const whatsappURL = `https://wa.me/${phoneNumber}?text=${whatsappMessage}`;
+
+      
+      window.open(whatsappURL, "_blank");
+
+      
       const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -77,6 +89,8 @@ if (contactForm) {
       } else {
         throw new Error("Network response was not ok");
       }
+      
+
     } catch (error) {
       alert("There was an error sending your message. Please try again later.");
       console.error("Error:", error);
